@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:34:11 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/10 19:43:11 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 t_state	g_state;
 
-int
+static long long
 	loop_alive(long long last_eat, long position)
 {
 	long long	limit;
@@ -34,17 +34,10 @@ int
 	usleep(g_state.time_to_eat);
 	last_eat = get_time();
 	clean_forks(&g_state, position);
-	if (is_one_dead(&g_state))
-		return (0);
-	display_message(&g_state, TYPE_SLEEP, get_time(), position);
-	usleep(g_state.time_to_sleep);
-	if (is_one_dead(&g_state))
-		return (0);
-	display_message(&g_state, TYPE_THINK, get_time(), position);
 	return (last_eat);
 }
 
-void
+static void
 	*philosopher_routine(void *v_pos)
 {
 	const long	position = (long)v_pos;
@@ -58,12 +51,19 @@ void
 	while (alive && !is_one_dead(&g_state))
 	{
 		if ((last_eat = loop_alive(last_eat, position)) == 0)
-			break ;
+			return ((void*)0);
+		if (is_one_dead(&g_state))
+			return ((void*)0);
+		display_message(&g_state, TYPE_SLEEP, get_time(), position);
+		usleep(g_state.time_to_sleep);
+		if (is_one_dead(&g_state))
+			return ((void*)0);
+		display_message(&g_state, TYPE_THINK, get_time(), position);
 	}
 	return ((void*)0);
 }
 
-int
+static int
 	start_threads(void)
 {
 	long			i;

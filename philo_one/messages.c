@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 18:31:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:20:35 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/10 19:44:54 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,20 +58,26 @@ void
 {
 	static int	last = -1;
 	static int	length = 0;
+	static int	done = 0;
 	char		*message;
 	int			j;
 
 	pthread_mutex_lock(&state->write_m);
-	copy_timestamp(state->buffer, timestamp);
-	copy_position(state->buffer, state->pos_digits, position);
-	if (type != last)
+	if (!done)
 	{
-		message = get_message(type);
-		length = 15 + state->pos_digits;
-		j = 0;
-		while (message[j])
-			state->buffer[length++] = message[j++];
+		copy_timestamp(state->buffer, timestamp);
+		copy_position(state->buffer, state->pos_digits, position);
+		if (type != last)
+		{
+			message = get_message(type);
+			length = 15 + state->pos_digits;
+			j = 0;
+			while (message[j])
+				state->buffer[length++] = message[j++];
+		}
+		if (type == TYPE_DIED)
+			done = 1;
+		write(1, state->buffer, length);
 	}
-	write(1, state->buffer, length);
 	pthread_mutex_unlock(&state->write_m);
 }

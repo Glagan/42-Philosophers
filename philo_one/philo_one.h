@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:07 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:36:02 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/10 19:36:34 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct	s_state
 	long long		time_to_die;
 	useconds_t		time_to_eat;
 	useconds_t		time_to_sleep;
+	int				must_eat;
 	char			*buffer;
 	int				pos_digits;
 	pthread_t		*threads;
