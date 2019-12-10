@@ -6,12 +6,11 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:43:11 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/10 19:52:32 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include "philo_one.h"
+#include "philosophers.h"
 
 t_state	g_state;
 
