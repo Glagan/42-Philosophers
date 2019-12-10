@@ -6,11 +6,11 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:45 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 14:45:59 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/10 19:19:17 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utils.h"
+#include "philo_one.h"
 
 int
 	ft_strlen(char const *str)
@@ -58,18 +58,15 @@ int
 int
 	clear_state(t_state *state)
 {
-	int	i;
-
 	if (state->threads)
 		free(state->threads);
 	if (state->forks)
-	{
-		i = 0;
-		while (i < state->amount)
-			pthread_mutex_destroy(&state->forks[i++]);
 		free(state->forks);
-	}
+	if (state->buffer)
+		free(state->buffer);
 	pthread_mutex_destroy(&state->dead_m);
+	pthread_mutex_destroy(&state->fork_reading);
+	pthread_mutex_destroy(&state->write_m);
 	return (1);
 }
 
