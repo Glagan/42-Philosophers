@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 18:31:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:52:35 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 15:44:21 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void
 	char		*message;
 	int			j;
 
-	pthread_mutex_lock(&state->write_m);
+	sem_wait(state->write_m);
 	if (!done)
 	{
 		copy_timestamp(state->buffer, timestamp);
@@ -79,5 +79,5 @@ void
 			done = 1;
 		write(1, state->buffer, length);
 	}
-	pthread_mutex_unlock(&state->write_m);
+	sem_post(state->write_m);
 }

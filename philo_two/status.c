@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 18:22:49 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:52:39 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 15:44:29 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 int
 	kill_philosopher(t_state *state, long position)
 {
-	pthread_mutex_lock(&state->dead_m);
+	sem_wait(state->dead_m);
 	if (!state->dead)
 		state->dead = position;
-	pthread_mutex_unlock(&state->dead_m);
+	sem_post(state->dead_m);
 	return (0);
 }
 
@@ -28,8 +28,8 @@ int
 	int	is_there;
 
 	is_there = 0;
-	pthread_mutex_lock(&state->dead_m);
+	sem_wait(state->dead_m);
 	is_there = !!state->dead;
-	pthread_mutex_unlock(&state->dead_m);
+	sem_post(state->dead_m);
 	return (is_there);
 }

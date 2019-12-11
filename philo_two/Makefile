@@ -6,17 +6,17 @@
 #    By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/09 19:06:43 by ncolomer          #+#    #+#              #
-#    Updated: 2019/12/10 19:53:18 by ncolomer         ###   ########.fr        #
+#    Updated: 2019/12/11 17:27:20 by ncolomer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS			= main.c utils.c status.c forks.c messages.c init.c
+SRCS			= main.c utils.c status.c messages.c init.c
 OBJS			= $(SRCS:.c=.o)
 
 CC				= gcc
 RM				= rm -f
 CFLAGS			= -Wall -Wextra -Werror -I.
-LIBS			= -lpthread
+LIBS			= -pthread
 
 NAME			= philo_two
 

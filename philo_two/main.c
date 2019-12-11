@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:52:32 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 17:35:10 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,12 @@ static long long
 	limit = last_eat + g_state.time_to_die;
 	if (get_time() > limit)
 		return (kill_philosopher(&g_state, position));
-	while (!wait_for_forks(&g_state, position))
-	{
-		if (is_one_dead(&g_state))
-			return (0);
-		else if (get_time() > limit)
-			return (kill_philosopher(&g_state, position));
-	}
+	sem_wait(g_state.forks);
+	display_message(&g_state, TYPE_FORK, get_time(), position);
 	display_message(&g_state, TYPE_EAT, get_time(), position);
-	usleep(g_state.time_to_eat);
 	last_eat = get_time();
-	clean_forks(&g_state, position);
+	usleep(g_state.time_to_eat);
+	sem_post(g_state.forks);
 	return (last_eat);
 }
 
@@ -42,9 +37,7 @@ static void
 	const long	position = (long)v_pos;
 	int			alive;
 	long long	last_eat;
-	int			pos_rfork;
 
-	pos_rfork = (position == g_state.amount) ? 0 : position;
 	last_eat = get_time();
 	alive = 1;
 	while (alive && !is_one_dead(&g_state))
@@ -85,6 +78,7 @@ int
 	main(int argc, char const **argv)
 {
 	int		i;
+	void	*status;
 
 	if (argc < 4 || argc > 5)
 		return (exit_error("error: bad arguments\n"));
@@ -95,10 +89,10 @@ int
 	}
 	i = 0;
 	while (!is_one_dead(&g_state))
-		(void)i;
-	while (i < g_state.amount)
-		pthread_detach(g_state.threads[i++]);
+		usleep(100);
 	display_message(&g_state, TYPE_DIED, get_time(), g_state.dead);
+	while (i < g_state.amount)
+		pthread_join(g_state.threads[i++], &status);
 	clear_state(&g_state);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:45 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:52:44 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 17:44:41 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,14 @@ int
 {
 	if (state->threads)
 		free(state->threads);
-	if (state->forks)
-		free(state->forks);
 	if (state->buffer)
 		free(state->buffer);
-	pthread_mutex_destroy(&state->dead_m);
-	pthread_mutex_destroy(&state->fork_reading);
-	pthread_mutex_destroy(&state->write_m);
+	sem_close(state->forks);
+	sem_unlink(SEMAPHORE_FORK);
+	sem_close(state->dead_m);
+	sem_unlink(SEMAPHORE_DEAD);
+	sem_close(state->write_m);
+	sem_unlink(SEMAPHORE_WRITE);
 	return (1);
 }
 

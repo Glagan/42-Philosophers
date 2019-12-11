@@ -6,29 +6,31 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 19:26:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:57:11 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 17:45:14 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
+static sem_t
+	*open_semaphore(char const *name, int value)
+{
+	return (sem_open(name, O_CREAT | O_EXCL, 0644, value));
+}
+
 static int
 	init_mutexes(t_state *state)
 {
-	int	i;
-
-	pthread_mutex_init(&state->dead_m, NULL);
-	pthread_mutex_init(&state->fork_reading, NULL);
-	pthread_mutex_init(&state->write_m, NULL);
+	sem_unlink(SEMAPHORE_FORK);
+	sem_unlink(SEMAPHORE_DEAD);
+	sem_unlink(SEMAPHORE_WRITE);
+	if ((state->forks = open_semaphore(SEMAPHORE_FORK, state->amount / 2)) < 0
+		|| (state->dead_m = open_semaphore(SEMAPHORE_DEAD, 1)) < 0
+		|| (state->write_m = open_semaphore(SEMAPHORE_WRITE, 1)) < 0)
+		return (1);
 	if (!(state->threads =
 		(pthread_t*)malloc(sizeof(*(state->threads)) * state->amount)))
 		return (1);
-	if (!(state->forks =
-		(int*)malloc(sizeof(*(state->forks)) * state->amount)))
-		return (1);
-	i = 0;
-	while (i < state->amount)
-		state->forks[i++] = 0;
 	return (0);
 }
 
@@ -56,7 +58,6 @@ int
 	state->time_to_eat = ft_atoi(argv[3]) * 1000;
 	state->time_to_sleep = ft_atoi(argv[4]) * 1000;
 	state->threads = NULL;
-	state->forks = NULL;
 	state->dead = 0;
 	state->pos_digits = 1;
 	tmp = state->amount;

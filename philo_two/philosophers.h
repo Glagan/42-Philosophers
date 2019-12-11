@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:07 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:53:26 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 16:07:44 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 # include <unistd.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <semaphore.h>
+
+# define SEMAPHORE_FORK		"pSemaphoreFork"
+# define SEMAPHORE_DEAD		"pSemaphoreDead"
+# define SEMAPHORE_WRITE	"pSemaphoreWrite"
 
 # define TYPE_EAT 	0
 # define TYPE_SLEEP 1
@@ -35,10 +40,9 @@ typedef struct	s_state
 	char			*buffer;
 	int				pos_digits;
 	pthread_t		*threads;
-	int				*forks;
-	pthread_mutex_t	fork_reading;
-	pthread_mutex_t	dead_m;
-	pthread_mutex_t	write_m;
+	sem_t			*forks;
+	sem_t			*dead_m;
+	sem_t			*write_m;
 }				t_state;
 
 int				ft_strlen(char const *str);

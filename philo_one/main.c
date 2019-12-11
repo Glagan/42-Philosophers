@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:52:32 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 17:34:44 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ static long long
 			return (kill_philosopher(&g_state, position));
 	}
 	display_message(&g_state, TYPE_EAT, get_time(), position);
-	usleep(g_state.time_to_eat);
 	last_eat = get_time();
+	usleep(g_state.time_to_eat);
 	clean_forks(&g_state, position);
 	return (last_eat);
 }
@@ -42,9 +42,7 @@ static void
 	const long	position = (long)v_pos;
 	int			alive;
 	long long	last_eat;
-	int			pos_rfork;
 
-	pos_rfork = (position == g_state.amount) ? 0 : position;
 	last_eat = get_time();
 	alive = 1;
 	while (alive && !is_one_dead(&g_state))
