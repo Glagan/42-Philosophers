@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 19:26:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:57:28 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 19:57:33 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int
 	int	tmp;
 
 	state->amount = ft_atoi(argv[1]);
-	state->time_to_die = ft_atoi(argv[2]);
+	state->time_to_die = ft_atoi(argv[2]) * 1000;
 	state->time_to_eat = ft_atoi(argv[3]) * 1000;
 	state->time_to_sleep = ft_atoi(argv[4]) * 1000;
 	state->threads = NULL;

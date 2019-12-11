@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/11 17:35:10 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 20:08:11 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,40 @@
 
 t_state	g_state;
 
-static long long
-	loop_alive(long long last_eat, long position)
+static int
+	should_end(uint64_t limit, long position, int do_post)
 {
-	long long	limit;
+	if (is_one_dead(&g_state))
+	{
+		if (do_post)
+			sem_post(g_state.forks);
+		return (1);
+	}
+	if ((get_time() / 1000) > (limit / 1000))
+	{
+		if (do_post)
+			sem_post(g_state.forks);
+		return (!kill_philosopher(&g_state, position));
+	}
+	return (0);
+}
 
-	limit = last_eat + g_state.time_to_die;
-	if (get_time() > limit)
-		return (kill_philosopher(&g_state, position));
+static uint64_t
+	eat(uint64_t last_eat, uint64_t limit, long position)
+{
+	uint64_t	curr_time;
+
 	sem_wait(g_state.forks);
-	display_message(&g_state, TYPE_FORK, get_time(), position);
+	if (should_end(limit, position, 1))
+		return (0);
 	display_message(&g_state, TYPE_EAT, get_time(), position);
 	last_eat = get_time();
-	usleep(g_state.time_to_eat);
+	limit = last_eat + g_state.time_to_die;
+	curr_time = get_time();
+	if ((curr_time + g_state.time_to_eat) > limit)
+		usleep(limit - curr_time);
+	else
+		usleep(g_state.time_to_eat);
 	sem_post(g_state.forks);
 	return (last_eat);
 }
@@ -35,21 +56,22 @@ static void
 	*philosopher_routine(void *v_pos)
 {
 	const long	position = (long)v_pos;
-	int			alive;
-	long long	last_eat;
+	uint64_t	last_eat;
+	uint64_t	limit;
 
-	last_eat = get_time();
-	alive = 1;
-	while (alive && !is_one_dead(&g_state))
+	limit = get_time() + g_state.time_to_die;
+	while (!is_one_dead(&g_state))
 	{
-		if ((last_eat = loop_alive(last_eat, position)) == 0)
+		if ((last_eat = eat(last_eat, limit, position)) == 0)
 			return ((void*)0);
-		if (is_one_dead(&g_state))
+		limit = last_eat + g_state.time_to_die;
+		if (should_end(limit, position, 0))
 			return ((void*)0);
 		display_message(&g_state, TYPE_SLEEP, get_time(), position);
-		usleep(g_state.time_to_sleep);
-		if (is_one_dead(&g_state))
-			return ((void*)0);
+		if ((get_time() + g_state.time_to_sleep) > limit)
+			usleep(limit - get_time());
+		else
+			usleep(g_state.time_to_sleep);
 		display_message(&g_state, TYPE_THINK, get_time(), position);
 	}
 	return ((void*)0);
@@ -89,7 +111,7 @@ int
 	}
 	i = 0;
 	while (!is_one_dead(&g_state))
-		usleep(100);
+		usleep(1000);
 	display_message(&g_state, TYPE_DIED, get_time(), g_state.dead);
 	while (i < g_state.amount)
 		pthread_join(g_state.threads[i++], &status);

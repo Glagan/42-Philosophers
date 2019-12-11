@@ -6,13 +6,13 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 18:22:49 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/11 15:44:29 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 17:52:59 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int
+long
 	kill_philosopher(t_state *state, long position)
 {
 	sem_wait(state->dead_m);

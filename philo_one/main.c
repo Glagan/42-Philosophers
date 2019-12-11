@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/11 17:34:44 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 19:58:46 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 t_state	g_state;
 
-static long long
-	loop_alive(long long last_eat, long position)
+static uint64_t
+	loop_alive(uint64_t last_eat, long position)
 {
-	long long	limit;
+	uint64_t	limit;
 
 	limit = last_eat + g_state.time_to_die;
 	if (get_time() > limit)
@@ -41,7 +41,7 @@ static void
 {
 	const long	position = (long)v_pos;
 	int			alive;
-	long long	last_eat;
+	uint64_t	last_eat;
 
 	last_eat = get_time();
 	alive = 1;

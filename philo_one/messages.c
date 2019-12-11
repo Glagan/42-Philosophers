@@ -6,23 +6,26 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 18:31:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:52:35 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 20:07:47 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
 static void
-	copy_timestamp(char *buffer, long long timestamp)
+	copy_timestamp(char *buffer, uint64_t timestamp)
 {
 	int	i;
 
 	i = 12;
+	timestamp /= 1000;
 	while (timestamp > 0)
 	{
 		buffer[i--] = (timestamp % 10) + '0';
 		timestamp /= 10;
 	}
+	while (i >= 0)
+		buffer[i--] = ' ';
 }
 
 static void
@@ -52,29 +55,43 @@ static char
 	return ("died\n");
 }
 
+static int
+	copy_message(t_state *state, int type)
+{
+	char	*message;
+	int		j;
+	int		length;
+
+	message = get_message(type);
+	length = 15 + state->pos_digits;
+	j = 0;
+	while (message[j])
+		state->buffer[length++] = message[j++];
+	return (length);
+}
+
 void
 	display_message(t_state *state, int type,
-						long long timestamp, long position)
+						uint64_t timestamp, long position)
 {
 	static int	last = -1;
 	static int	length = 0;
 	static int	done = 0;
-	char		*message;
-	int			j;
 
+	if (done)
+		return ;
 	pthread_mutex_lock(&state->write_m);
 	if (!done)
 	{
 		copy_timestamp(state->buffer, timestamp);
 		copy_position(state->buffer, state->pos_digits, position);
-		if (type != last)
+		if (type == TYPE_EAT)
 		{
-			message = get_message(type);
-			length = 15 + state->pos_digits;
-			j = 0;
-			while (message[j])
-				state->buffer[length++] = message[j++];
+			length = copy_message(state, TYPE_FORK);
+			write(1, state->buffer, length);
 		}
+		if (type != last || type == TYPE_EAT)
+			length = copy_message(state, type);
 		if (type == TYPE_DIED)
 			done = 1;
 		write(1, state->buffer, length);

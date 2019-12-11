@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:07 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/11 16:07:44 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/11 19:32:11 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ typedef struct	s_state
 {
 	long			dead;
 	int				amount;
-	long long		time_to_die;
-	useconds_t		time_to_eat;
-	useconds_t		time_to_sleep;
+	uint64_t		time_to_die;
+	uint64_t		time_to_eat;
+	uint64_t		time_to_sleep;
 	int				must_eat;
 	char			*buffer;
 	int				pos_digits;
@@ -53,7 +53,7 @@ int				ft_atoi(char const *str);
 
 int				clear_state(t_state *state);
 
-long long		get_time(void);
+uint64_t		get_time(void);
 
 int				init_params(t_state *state, int argc, char const **argv);
 
@@ -61,11 +61,11 @@ int				wait_for_forks(t_state *state, long position);
 
 void			clean_forks(t_state *state, long position);
 
-int				kill_philosopher(t_state *state, long position);
+long			kill_philosopher(t_state *state, long position);
 
 int				is_one_dead(t_state *state);
 
 void			display_message(t_state *state, int type,
-									long long timestamp, long position);
+									uint64_t timestamp, long position);
 
 #endif
