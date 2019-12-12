@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 17:13:18 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 17:45:23 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void
 			return ((void*)0);
 		display_message(&g_state, TYPE_SLEEP, get_time(), position);
 		curr_time = get_time();
-		if ((curr_time + g_state.time_to_sleep) >= limit)
+		if ((curr_time + g_state.time_to_sleep) > limit)
 			usleep((limit * 990) - (curr_time * 990));
 		else
 			usleep(g_state.time_to_sleep * 990);

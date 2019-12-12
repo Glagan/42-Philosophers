@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 17:41:01 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 17:45:45 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,10 @@ static uint64_t
 		return (0);
 	display_message(&g_state, TYPE_EAT, get_time(), position);
 	last_eat = get_time();
-	usleep(g_state.time_to_eat * 1000);
+	if ((last_eat + g_state.time_to_eat) > limit)
+		usleep((limit * 1000) - (last_eat * 1000));
+	else
+		usleep(g_state.time_to_eat * 1000);
 	clean_forks(&g_state, position);
 	return (last_eat);
 }
@@ -51,6 +54,7 @@ static void
 	const long	position = (long)v_pos;
 	uint64_t	last_eat;
 	uint64_t	limit;
+	uint64_t	curr_time;
 
 	last_eat = get_time();
 	while (!is_one_dead(&g_state))
@@ -61,7 +65,11 @@ static void
 		if (should_end(limit, position))
 			return (0);
 		display_message(&g_state, TYPE_SLEEP, get_time(), position);
-		usleep(g_state.time_to_sleep * 1000);
+		curr_time = get_time();
+		if ((curr_time + g_state.time_to_sleep) > limit)
+			usleep((limit * 1000) - (curr_time * 1000));
+		else
+			usleep(g_state.time_to_sleep * 1000);
 		if (should_end(limit, position))
 			return (0);
 		display_message(&g_state, TYPE_THINK, get_time(), position);

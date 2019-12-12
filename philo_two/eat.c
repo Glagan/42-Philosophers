@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/12 17:08:54 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 17:39:07 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 17:48:57 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ uint64_t
 	display_message(state, TYPE_EAT, get_time(), position);
 	last_eat = get_time();
 	limit = last_eat + state->time_to_die;
-	if ((last_eat + state->time_to_eat) >= limit)
+	if ((last_eat + state->time_to_eat) > limit)
 		usleep((limit - last_eat) * 990);
 	else
 		usleep(state->time_to_eat * 990);
