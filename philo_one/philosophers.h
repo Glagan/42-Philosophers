@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:07 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/11 20:06:21 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 22:48:55 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,44 +24,58 @@
 # define TYPE_THINK	3
 # define TYPE_DIED 	4
 
-typedef struct	s_state
+struct s_state;
+
+typedef struct		s_philo
 {
-	long			dead;
+	int				position;
+	int				is_eating;
+	uint64_t		limit;
+	uint64_t		last_eat;
+	int				lfork;
+	int				rfork;
+	struct s_state	*state;
+	pthread_mutex_t	mutex;
+}					t_philo;
+
+typedef struct		s_state
+{
 	int				amount;
 	uint64_t		time_to_die;
 	uint64_t		time_to_eat;
 	uint64_t		time_to_sleep;
 	int				must_eat;
-	char			*buffer;
-	int				pos_digits;
-	pthread_t		*threads;
-	int				*forks;
-	pthread_mutex_t	fork_reading;
-	pthread_mutex_t	dead_m;
+
+	uint64_t		start;
+	int				over;
+
+	t_philo			*philos;
+	pthread_mutex_t	*forks_m;
 	pthread_mutex_t	write_m;
-}				t_state;
+	pthread_mutex_t	is_over_m;
+	pthread_mutex_t	somebody_dead_m;
+}					t_state;
 
-int				ft_strlen(char const *str);
+int					ft_strlen(char const *str);
 
-int				exit_error(char const *str);
+int					exit_error(char const *str);
 
-int				ft_atoi(char const *str);
+int					ft_atoi(char const *str);
 
-int				clear_state(t_state *state);
+void				ft_putnbr_fd(uint64_t n, int fd);
 
-uint64_t		get_time(void);
+int					clear_state(t_state *state);
 
-int				init_params(t_state *state, int argc, char const **argv);
+uint64_t			get_time(void);
 
-int				wait_for_forks(t_state *state, long position);
+int					init(t_state *state, int argc, char const **argv);
 
-void			clean_forks(t_state *state, long position);
+void				take_forks(t_philo *philo);
 
-int				kill_philosopher(t_state *state, long position);
+void				clean_forks(t_philo *philo);
 
-int				is_one_dead(t_state *state);
+void				eat(t_philo *philo);
 
-void			display_message(t_state *state, int type,
-									uint64_t timestamp, long position);
+void				display_message(t_philo *philo, int type);
 
 #endif

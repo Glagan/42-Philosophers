@@ -1,35 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   status.c                                           :+:      :+:    :+:   */
+/*   eat.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/12/10 18:22:49 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 17:19:10 by ncolomer         ###   ########.fr       */
+/*   Created: 2019/12/12 22:41:58 by ncolomer          #+#    #+#             */
+/*   Updated: 2019/12/12 23:06:41 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-long
-	kill_philosopher(t_state *state, long position)
+void
+	eat(t_philo *philo)
 {
-	sem_wait(state->dead_m);
-	if (!state->dead)
-		state->dead = position;
-	sem_post(state->dead_m);
-	return (0);
-}
-
-int
-	is_one_dead(t_state *state)
-{
-	int	is_there;
-
-	is_there = 0;
-	sem_wait(state->dead_m);
-	is_there = !!state->dead;
-	sem_post(state->dead_m);
-	return (is_there);
+	pthread_mutex_lock(&philo->mutex);
+	philo->is_eating = 1;
+	philo->last_eat = get_time();
+	philo->limit = philo->last_eat + philo->state->time_to_die;
+	display_message(philo, TYPE_EAT);
+	usleep(philo->state->time_to_eat * 1000);
+	philo->is_eating = 0;
+	pthread_mutex_unlock(&philo->mutex);
 }

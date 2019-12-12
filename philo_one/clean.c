@@ -1,35 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   status.c                                           :+:      :+:    :+:   */
+/*   clean.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/12/10 18:22:49 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/10 19:52:39 by ncolomer         ###   ########.fr       */
+/*   Created: 2019/12/12 22:02:59 by ncolomer          #+#    #+#             */
+/*   Updated: 2019/12/12 22:35:52 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
 int
-	kill_philosopher(t_state *state, long position)
+	clear_state(t_state *state)
 {
-	pthread_mutex_lock(&state->dead_m);
-	if (!state->dead)
-		state->dead = position;
-	pthread_mutex_unlock(&state->dead_m);
-	return (0);
-}
+	int	i;
 
-int
-	is_one_dead(t_state *state)
-{
-	int	is_there;
-
-	is_there = 0;
-	pthread_mutex_lock(&state->dead_m);
-	is_there = !!state->dead;
-	pthread_mutex_unlock(&state->dead_m);
-	return (is_there);
+	if (state->forks_m)
+	{
+		i = 0;
+		while (i < state->amount)
+			pthread_mutex_destroy(&state->forks_m[i++]);
+		free(state->forks_m);
+	}
+	if (state->philos)
+		free(state->philos);
+	pthread_mutex_destroy(&state->write_m);
+	pthread_mutex_destroy(&state->is_over_m);
+	pthread_mutex_destroy(&state->somebody_dead_m);
+	return (1);
 }

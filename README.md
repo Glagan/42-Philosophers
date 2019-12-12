@@ -8,3 +8,5 @@
 * [French tutorial](https://franckh.developpez.com/tutoriels/posix/pthreads/)
 * [Semaphores in C](http://greenteapress.com/thinkos/html/thinkos012.html)
 * [Semaphores example in French](http://jean-luc.massat.perso.luminy.univ-amu.fr/ens/docs/thread-sem.html)
+* [fork() example](https://timmurphy.org/2014/04/26/using-fork-in-cc-a-minimum-working-example/)
+* [fork() multiple childs](https://stackoverflow.com/questions/876605/multiple-child-process)

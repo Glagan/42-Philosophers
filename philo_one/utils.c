@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:45 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 17:19:00 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 22:43:35 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,19 +55,24 @@ int
 	return (res * is_neg);
 }
 
-int
-	clear_state(t_state *state)
+void
+	ft_putnbr_fd(uint64_t n, int fd)
 {
-	if (state->threads)
-		free(state->threads);
-	if (state->forks)
-		free(state->forks);
-	if (state->buffer)
-		free(state->buffer);
-	pthread_mutex_destroy(&state->dead_m);
-	pthread_mutex_destroy(&state->fork_reading);
-	pthread_mutex_destroy(&state->write_m);
-	return (1);
+	char	str[13];
+	int		length;
+
+	if (n == 0)
+		str[0] = '0';
+	length = 0;
+	while (n != 0)
+	{
+		str[length++] = '0' + (n % 10);
+		n = (n / 10);
+	}
+	if (length > 0)
+		length--;
+	while (length >= 0)
+		write(fd, &str[length--], 1);
 }
 
 uint64_t

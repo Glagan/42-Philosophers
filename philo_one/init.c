@@ -6,68 +6,66 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 19:26:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 17:18:46 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 22:47:10 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+#include <stdio.h>
 
 static int
 	init_mutexes(t_state *state)
 {
 	int	i;
 
-	pthread_mutex_init(&state->dead_m, NULL);
-	pthread_mutex_init(&state->fork_reading, NULL);
 	pthread_mutex_init(&state->write_m, NULL);
-	if (!(state->threads =
-		(pthread_t*)malloc(sizeof(*(state->threads)) * state->amount)))
-		return (1);
-	if (!(state->forks =
-		(int*)malloc(sizeof(*(state->forks)) * state->amount)))
+	pthread_mutex_init(&state->is_over_m, NULL);
+	pthread_mutex_init(&state->somebody_dead_m, NULL);
+	pthread_mutex_lock(&state->somebody_dead_m);
+	if (!(state->forks_m =
+		(pthread_mutex_t*)malloc(sizeof(*(state->forks_m)) * state->amount)))
 		return (1);
 	i = 0;
 	while (i < state->amount)
-		state->forks[i++] = 0;
+		pthread_mutex_init(&state->forks_m[i++], NULL);
 	return (0);
 }
 
-static int
-	init_buffer(t_state *state)
+static void
+	init_philos(t_state *state)
 {
-	state->buffer = NULL;
-	if (!(state->buffer =
-		(char*)malloc(sizeof(*state->buffer) * (33 + state->pos_digits))))
+	int	i;
+
+	i = 0;
+	while (i < state->amount)
 	{
-		return (1);
+		state->philos[i].is_eating = 0;
+		state->philos[i].position = i;
+		state->philos[i].lfork = i;
+		state->philos[i].rfork = (i + 1) % state->amount;
+		state->philos[i].state = state;
+		pthread_mutex_init(&state->philos[i].mutex, NULL);
+		i++;
 	}
-	state->buffer[13] = ' ';
-	state->buffer[14 + state->pos_digits] = ' ';
-	return (0);
 }
 
 int
-	init_params(t_state *state, int argc, char const **argv)
+	init(t_state *state, int argc, char const **argv)
 {
-	int	tmp;
-
 	state->amount = ft_atoi(argv[1]);
 	state->time_to_die = ft_atoi(argv[2]);
 	state->time_to_eat = ft_atoi(argv[3]);
 	state->time_to_sleep = ft_atoi(argv[4]);
-	state->threads = NULL;
-	state->forks = NULL;
-	state->dead = 0;
-	state->pos_digits = 1;
-	tmp = state->amount;
-	while (tmp > 10)
-	{
-		state->pos_digits++;
-		tmp /= 10;
-	}
-	if (init_buffer(state))
-		return (1);
+	state->forks_m = NULL;
+	state->philos = NULL;
+	state->over = 0;
 	if (argc == 5)
 		state->must_eat = ft_atoi(argv[5]);
+	else
+		state->must_eat = 0;
+	if (!(state->philos =
+		(t_philo*)malloc(sizeof(*(state->philos)) * state->amount)))
+		return (1);
+	init_philos(state);
 	return (init_mutexes(state));
 }

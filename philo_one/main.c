@@ -6,115 +6,103 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 17:45:45 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 23:03:56 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-t_state	g_state;
-
-int
-	should_end(uint64_t limit, long position)
+static int
+	is_over(t_state *state)
 {
-	if (is_one_dead(&g_state))
-		return (1);
-	if (get_time() > limit)
-		return (!kill_philosopher(&g_state, position));
-	return (0);
-}
+	int	over;
 
-static uint64_t
-	try_to_eat(uint64_t last_eat, long position)
-{
-	uint64_t	limit;
-
-	limit = last_eat + g_state.time_to_die;
-	while (!wait_for_forks(&g_state, position))
-	{
-		if (should_end(limit, position))
-			return (0);
-		usleep(400);
-	}
-	if (should_end(limit, position))
-		return (0);
-	display_message(&g_state, TYPE_EAT, get_time(), position);
-	last_eat = get_time();
-	if ((last_eat + g_state.time_to_eat) > limit)
-		usleep((limit * 1000) - (last_eat * 1000));
-	else
-		usleep(g_state.time_to_eat * 1000);
-	clean_forks(&g_state, position);
-	return (last_eat);
+	pthread_mutex_lock(&state->is_over_m);
+	over = state->over;
+	pthread_mutex_unlock(&state->is_over_m);
+	return (over);
 }
 
 static void
-	*philosopher_routine(void *v_pos)
+	*monitor(void *philo_v)
 {
-	const long	position = (long)v_pos;
-	uint64_t	last_eat;
-	uint64_t	limit;
-	uint64_t	curr_time;
+	t_philo		*philo;
 
-	last_eat = get_time();
-	while (!is_one_dead(&g_state))
+	philo = (t_philo*)philo_v;
+	while (1)
 	{
-		if ((last_eat = try_to_eat(last_eat, position)) == 0)
+		if (is_over(philo->state))
 			return ((void*)0);
-		limit = last_eat + g_state.time_to_die;
-		if (should_end(limit, position))
-			return (0);
-		display_message(&g_state, TYPE_SLEEP, get_time(), position);
-		curr_time = get_time();
-		if ((curr_time + g_state.time_to_sleep) > limit)
-			usleep((limit * 1000) - (curr_time * 1000));
-		else
-			usleep(g_state.time_to_sleep * 1000);
-		if (should_end(limit, position))
-			return (0);
-		display_message(&g_state, TYPE_THINK, get_time(), position);
+		pthread_mutex_lock(&philo->mutex);
+		if (!philo->is_eating && get_time() > philo->limit)
+		{
+			display_message(philo, TYPE_DIED);
+			pthread_mutex_unlock(&philo->mutex);
+			pthread_mutex_unlock(&philo->state->somebody_dead_m);
+			return ((void*)0);
+		}
+		pthread_mutex_unlock(&philo->mutex);
+		usleep(1000);
+	}
+}
+
+static void
+	*routine(void *philo_v)
+{
+	t_philo		*philo;
+
+	philo = (t_philo*)philo_v;
+	philo->last_eat = get_time();
+	philo->limit = philo->last_eat + philo->state->time_to_die;
+	while (1)
+	{
+		take_forks(philo);
+		eat(philo);
+		clean_forks(philo);
+		if (is_over(philo->state))
+			return ((void*)0);
+		display_message(philo, TYPE_THINK);
 	}
 	return ((void*)0);
 }
 
 static int
-	start_threads(void)
+	start_threads(t_state *state)
 {
-	long			i;
-	pthread_attr_t	attr;
+	int			i;
+	pthread_t	tid;
+	void		*philo;
 
-	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	state->start = get_time();
 	i = 0;
-	while (i < g_state.amount)
+	while (i < state->amount)
 	{
-		pthread_create(&g_state.threads[i],
-			&attr, &philosopher_routine, (void*)(i + 1));
+		philo = (void*)(&state->philos[i]);
+		if (pthread_create(&tid, NULL, &routine, philo) != 0)
+			return (1);
+		usleep(100);
+		pthread_detach(tid);
+		if (pthread_create(&tid, NULL, &monitor, philo) != 0)
+			return (1);
+		pthread_detach(tid);
 		i++;
 	}
-	pthread_attr_destroy(&attr);
 	return (0);
 }
 
 int
 	main(int argc, char const **argv)
 {
-	int		i;
-	void	*status;
+	t_state	state;
 
 	if (argc < 4 || argc > 5)
 		return (exit_error("error: bad arguments\n"));
-	if (init_params(&g_state, argc, argv) || start_threads())
-	{
-		return (clear_state(&g_state)
-			&& exit_error("error: fatal\n"));
-	}
-	while (!is_one_dead(&g_state))
-		usleep(1000);
-	display_message(&g_state, TYPE_DIED, get_time(), g_state.dead);
-	i = 0;
-	while (i < g_state.amount)
-		pthread_join(g_state.threads[i++], &status);
-	clear_state(&g_state);
+	if (init(&state, argc, argv))
+		return (clear_state(&state) && exit_error("error: fatal\n"));
+	if (start_threads(&state))
+		return (clear_state(&state) && exit_error("error: fatal\n"));
+	pthread_mutex_lock(&state.somebody_dead_m);
+	pthread_mutex_unlock(&state.somebody_dead_m);
+	clear_state(&state);
 	return (0);
 }
