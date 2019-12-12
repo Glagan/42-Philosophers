@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   clean.c                                            :+:      :+:    :+:   */
+/*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/12 22:02:59 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 22:35:52 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 23:24:13 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,13 @@ int
 	pthread_mutex_destroy(&state->write_m);
 	pthread_mutex_destroy(&state->is_over_m);
 	pthread_mutex_destroy(&state->somebody_dead_m);
+	return (1);
+}
+
+int
+	exit_error(char const *str)
+{
+	if (str)
+		write(1, str, ft_strlen(str));
 	return (1);
 }

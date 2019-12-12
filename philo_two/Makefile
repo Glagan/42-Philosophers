@@ -6,19 +6,20 @@
 #    By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/09 19:06:43 by ncolomer          #+#    #+#              #
-#    Updated: 2019/12/12 23:24:03 by ncolomer         ###   ########.fr        #
+#    Updated: 2019/12/12 23:34:33 by ncolomer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS			= main.c utils.c exit.c messages.c init.c forks.c eat.c
+SRCS			= main.c utils.c exit.c messages.c init.c forks.c eat.c \
+					semaphores.c
 OBJS			= $(SRCS:.c=.o)
 
 CC				= gcc
 RM				= rm -f
-CFLAGS			= -Wall -Wextra -Werror -I.
+CFLAGS			= -Wall -Wextra -Werror -I. -g
 LIBS			= -lpthread
 
-NAME			= philo_one
+NAME			= philo_two
 
 all:			$(NAME)
 

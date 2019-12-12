@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:45 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 23:24:10 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 23:27:06 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,21 @@ void
 		length--;
 	while (length >= 0)
 		write(fd, &str[length--], 1);
+}
+
+int
+	ft_strcpy(char *dst, const char *src)
+{
+	int	i;
+
+	i = 0;
+	while (src[i])
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = 0;
+	return (i);
 }
 
 uint64_t

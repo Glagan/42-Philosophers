@@ -6,46 +6,48 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 19:26:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 23:14:18 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 23:37:12 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
 static int
-	init_mutexes(t_state *state)
+	init_semaphores(t_state *state)
 {
-	int	i;
-
-	pthread_mutex_init(&state->write_m, NULL);
-	pthread_mutex_init(&state->is_over_m, NULL);
-	pthread_mutex_init(&state->somebody_dead_m, NULL);
-	pthread_mutex_lock(&state->somebody_dead_m);
-	if (!(state->forks_m =
-		(pthread_mutex_t*)malloc(sizeof(*(state->forks_m)) * state->amount)))
+	sem_unlink(SEMAPHORE_FORK);
+	sem_unlink(SEMAPHORE_WRITE);
+	sem_unlink(SEMAPHORE_OVER);
+	sem_unlink(SEMAPHORE_DEAD);
+	if ((state->forks_m = ft_sem_open(SEMAPHORE_FORK, state->amount)) < 0
+		|| (state->write_m = ft_sem_open(SEMAPHORE_WRITE, 1)) < 0
+		|| (state->is_over_m = ft_sem_open(SEMAPHORE_OVER, 1)) < 0
+		|| (state->somebody_dead_m = ft_sem_open(SEMAPHORE_DEAD, 0)) < 0)
 		return (1);
-	i = 0;
-	while (i < state->amount)
-		pthread_mutex_init(&state->forks_m[i++], NULL);
 	return (0);
 }
 
-static void
+static int
 	init_philos(t_state *state)
 {
-	int	i;
+	int		i;
+	char	semaphore[250];
 
 	i = 0;
 	while (i < state->amount)
 	{
+		make_semaphore_name((char*)semaphore, i);
+		sem_unlink(semaphore);
 		state->philos[i].is_eating = 0;
 		state->philos[i].position = i;
 		state->philos[i].lfork = i;
 		state->philos[i].rfork = (i + 1) % state->amount;
 		state->philos[i].state = state;
-		pthread_mutex_init(&state->philos[i].mutex, NULL);
+		if ((state->philos[i].mutex = ft_sem_open(semaphore, 1)) < 0)
+			return (1);
 		i++;
 	}
+	return (0);
 }
 
 int
@@ -65,6 +67,7 @@ int
 	if (!(state->philos =
 		(t_philo*)malloc(sizeof(*(state->philos)) * state->amount)))
 		return (1);
-	init_philos(state);
-	return (init_mutexes(state));
+	if (init_philos(state))
+		return (1);
+	return (init_semaphores(state));
 }

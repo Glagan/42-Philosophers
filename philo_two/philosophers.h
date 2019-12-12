@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:07 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 23:26:28 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 23:50:23 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,12 @@
 # include <unistd.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <semaphore.h>
+
+# define SEMAPHORE_FORK		"pSemaphoreFork"
+# define SEMAPHORE_WRITE	"pSemaphoreWrite"
+# define SEMAPHORE_OVER		"pSemaphoreOver"
+# define SEMAPHORE_DEAD		"pSemaphoreDead"
 
 # define TYPE_EAT 	0
 # define TYPE_SLEEP 1
@@ -35,7 +41,7 @@ typedef struct		s_philo
 	int				lfork;
 	int				rfork;
 	struct s_state	*state;
-	pthread_mutex_t	mutex;
+	sem_t			*mutex;
 }					t_philo;
 
 typedef struct		s_state
@@ -50,10 +56,10 @@ typedef struct		s_state
 	int				over;
 
 	t_philo			*philos;
-	pthread_mutex_t	*forks_m;
-	pthread_mutex_t	write_m;
-	pthread_mutex_t	is_over_m;
-	pthread_mutex_t	somebody_dead_m;
+	sem_t			*forks_m;
+	sem_t			*write_m;
+	sem_t			*is_over_m;
+	sem_t			*somebody_dead_m;
 }					t_state;
 
 int					ft_strlen(char const *str);
@@ -62,13 +68,21 @@ int					ft_atoi(char const *str);
 
 void				ft_putnbr_fd(uint64_t n, int fd);
 
+int					ft_strcpy(char *dst, const char *src);
+
 uint64_t			get_time(void);
+
+int					clear_philo(t_philo *philo);
 
 int					clear_state(t_state *state);
 
 int					exit_error(char const *str);
 
 int					init(t_state *state, int argc, char const **argv);
+
+sem_t				*ft_sem_open(char const *name, int value);
+
+char				*make_semaphore_name(char *buffer, int position);
 
 void				take_forks(t_philo *philo);
 
