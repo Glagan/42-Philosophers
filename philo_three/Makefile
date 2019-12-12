@@ -6,7 +6,7 @@
 #    By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/09 19:06:43 by ncolomer          #+#    #+#              #
-#    Updated: 2019/12/13 00:39:23 by ncolomer         ###   ########.fr        #
+#    Updated: 2019/12/13 00:44:15 by ncolomer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ RM				= rm -f
 CFLAGS			= -Wall -Wextra -Werror -I.
 LIBS			= -lpthread
 
-NAME			= philo_two
+NAME			= philo_three
 
 all:			$(NAME)
 
