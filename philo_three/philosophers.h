@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:07 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 00:35:37 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 00:52:50 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,6 @@ typedef struct		s_philo
 	int				rfork;
 	struct s_state	*state;
 	sem_t			*mutex;
-	sem_t			*forks_m;
-	sem_t			*write_m;
-	sem_t			*is_over_m;
-	sem_t			*somebody_dead_m;
-	sem_t			*dead_write_m;
 }					t_philo;
 
 typedef struct		s_state
@@ -81,8 +76,6 @@ int					ft_strcpy(char *dst, const char *src);
 
 uint64_t			get_time(void);
 
-int					clear_child_semaphores(t_philo *philo);
-
 int					clear_philo(t_philo *philo);
 
 int					clear_state(t_state *state);
@@ -90,8 +83,6 @@ int					clear_state(t_state *state);
 int					exit_error(char const *str);
 
 int					init(t_state *state, int argc, char const **argv);
-
-int					init_child_semaphores(t_philo *philo);
 
 sem_t				*ft_sem_open(char const *name, int value);
 

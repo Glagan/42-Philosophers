@@ -6,28 +6,11 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 19:26:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 00:36:15 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 00:51:08 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-int
-	init_child_semaphores(t_philo *philo)
-{
-	char	semaphore[250];
-
-	if ((philo->forks_m = sem_open(SEMAPHORE_FORK, O_RDWR)) < 0
-		|| (philo->write_m = sem_open(SEMAPHORE_WRITE, O_RDWR)) < 0
-		|| (philo->is_over_m = sem_open(SEMAPHORE_OVER, O_RDWR)) < 0
-		|| (philo->somebody_dead_m = sem_open(SEMAPHORE_DEAD, O_RDWR)) < 0
-		|| (philo->dead_write_m = sem_open(SEMAPHORE_DEADW, O_RDWR)) < 0)
-		return (1);
-	make_semaphore_name((char*)semaphore, philo->position);
-	if ((philo->mutex = sem_open(semaphore, O_RDWR)) < 0)
-		return (1);
-	return (0);
-}
 
 static int
 	init_semaphores(t_state *state)

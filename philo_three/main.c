@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 00:43:57 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 00:50:53 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static void
 		{
 			display_message(philo, TYPE_DIED);
 			sem_post(philo->mutex);
-			sem_post(philo->somebody_dead_m);
+			sem_post(philo->state->somebody_dead_m);
 			return ((void*)0);
 		}
 		sem_post(philo->mutex);
@@ -72,9 +72,7 @@ static int
 			return (1);
 		else if (state->philos[i].pid == 0)
 		{
-			init_child_semaphores(&state->philos[i]);
 			routine(&state->philos[i]);
-			clear_child_semaphores(&state->philos[i]);
 			exit(0);
 		}
 		usleep(100);
