@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 19:26:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/11 20:03:18 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 17:03:43 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,11 @@ static int
 	sem_unlink(SEMAPHORE_FORK);
 	sem_unlink(SEMAPHORE_DEAD);
 	sem_unlink(SEMAPHORE_WRITE);
+	sem_unlink(SEMAPHORE_READ);
 	if ((state->forks = open_semaphore(SEMAPHORE_FORK, state->amount / 2)) < 0
 		|| (state->dead_m = open_semaphore(SEMAPHORE_DEAD, 1)) < 0
-		|| (state->write_m = open_semaphore(SEMAPHORE_WRITE, 1)) < 0)
+		|| (state->write_m = open_semaphore(SEMAPHORE_WRITE, 1)) < 0
+		|| (state->fork_reading = open_semaphore(SEMAPHORE_READ, 1)) < 0)
 		return (1);
 	if (!(state->threads =
 		(pthread_t*)malloc(sizeof(*(state->threads)) * state->amount)))
@@ -54,9 +56,10 @@ int
 	int	tmp;
 
 	state->amount = ft_atoi(argv[1]);
-	state->time_to_die = ft_atoi(argv[2]) * 1000;
-	state->time_to_eat = ft_atoi(argv[3]) * 1000;
-	state->time_to_sleep = ft_atoi(argv[4]) * 1000;
+	state->available_forks = state->amount / 2;
+	state->time_to_die = ft_atoi(argv[2]);
+	state->time_to_eat = ft_atoi(argv[3]);
+	state->time_to_sleep = ft_atoi(argv[4]);
 	state->threads = NULL;
 	state->dead = 0;
 	state->pos_digits = 1;

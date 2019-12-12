@@ -6,11 +6,11 @@
 #    By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/09 19:06:43 by ncolomer          #+#    #+#              #
-#    Updated: 2019/12/11 17:27:20 by ncolomer         ###   ########.fr        #
+#    Updated: 2019/12/12 17:12:10 by ncolomer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS			= main.c utils.c status.c messages.c init.c
+SRCS			= main.c utils.c status.c messages.c init.c eat.c
 OBJS			= $(SRCS:.c=.o)
 
 CC				= gcc

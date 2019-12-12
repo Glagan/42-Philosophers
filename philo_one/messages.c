@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 18:31:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/11 20:07:47 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 17:21:54 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ static void
 	int	i;
 
 	i = 12;
-	timestamp /= 1000;
 	while (timestamp > 0)
 	{
 		buffer[i--] = (timestamp % 10) + '0';
@@ -85,12 +84,7 @@ void
 	{
 		copy_timestamp(state->buffer, timestamp);
 		copy_position(state->buffer, state->pos_digits, position);
-		if (type == TYPE_EAT)
-		{
-			length = copy_message(state, TYPE_FORK);
-			write(1, state->buffer, length);
-		}
-		if (type != last || type == TYPE_EAT)
+		if (type != last)
 			length = copy_message(state, type);
 		if (type == TYPE_DIED)
 			done = 1;

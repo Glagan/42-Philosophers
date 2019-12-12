@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:45 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/11 19:58:04 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/12 17:19:00 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,11 @@ int
 	return (1);
 }
 
-/*
-** Return current time in microseconds
-*/
 uint64_t
 	get_time(void)
 {
 	static struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-	return ((tv.tv_sec * (uint64_t)1000000) + tv.tv_usec);
+	return ((tv.tv_sec * (uint64_t)1000) + (tv.tv_usec / 1000));
 }
