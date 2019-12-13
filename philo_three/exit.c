@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/12 22:02:59 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 15:58:20 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 16:03:38 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int
 	make_semaphore_name(SEMAPHORE_PHILO, (char*)semaphore, philo->position);
 	sem_unlink(semaphore);
 	sem_close(philo->eat_count_m);
-	make_semaphore_name(SEMAPHORE_PHILOEAT,(char*)semaphore, philo->position);
+	make_semaphore_name(SEMAPHORE_PHILOEAT, (char*)semaphore, philo->position);
 	sem_unlink(semaphore);
 	return (0);
 }

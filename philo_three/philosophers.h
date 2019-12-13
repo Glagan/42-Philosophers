@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:07 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 15:58:45 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 16:09:41 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,12 @@ sem_t				*ft_sem_open(char const *name, int value);
 
 char				*make_semaphore_name(char const *base,
 											char *buffer, int position);
+
+void				*monitor_count(void *state_v);
+
+void				*monitor(void *philo_v);
+
+int					start_monitor_thread(t_state *state);
 
 void				take_forks(t_philo *philo);
 

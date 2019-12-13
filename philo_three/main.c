@@ -6,54 +6,11 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 15:59:04 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 16:09:32 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-static void
-	*monitor_count(void *state_v)
-{
-	t_state *state;
-	int		total;
-	int		i;
-
-	state = (t_state*)state_v;
-	total = 0;
-	while (total < state->must_eat_count)
-	{
-		i = 0;
-		while (i < state->amount)
-			sem_wait(state->philos[i++].eat_count_m);
-		total++;
-	}
-	display_message(&state->philos[0], TYPE_OVER);
-	sem_post(state->somebody_dead_m);
-	return ((void*)0);
-}
-
-static void
-	*monitor(void *philo_v)
-{
-	t_philo		*philo;
-
-	philo = (t_philo*)philo_v;
-	while (1)
-	{
-		sem_wait(philo->mutex);
-		if (!philo->is_eating && get_time() > philo->limit)
-		{
-			display_message(philo, TYPE_DIED);
-			sem_post(philo->mutex);
-			sem_post(philo->state->somebody_dead_m);
-			return ((void*)0);
-		}
-		sem_post(philo->mutex);
-		usleep(1000);
-	}
-	return ((void*)0);
-}
 
 static int
 	routine(t_philo *philo_v)
@@ -82,14 +39,7 @@ static int
 {
 	int			i;
 	void		*philo;
-	pthread_t	tid;
 
-	if (state->must_eat_count > 0)
-	{
-		if (pthread_create(&tid, NULL, &monitor_count, (void*)state) != 0)
-			return (1);
-		pthread_detach(tid);
-	}
 	state->start = get_time();
 	i = 0;
 	while (i < state->amount)
@@ -117,17 +67,16 @@ int
 
 	if (argc < 5 || argc > 6)
 		return (exit_error("error: bad arguments\n"));
-	if (init(&state, argc, argv))
-		return (clear_state(&state) && exit_error("error: fatal\n"));
-	if (start_process(&state))
+	if (init(&state, argc, argv)
+		|| start_monitor_thread(&state)
+		|| start_process(&state))
 		return (clear_state(&state) && exit_error("error: fatal\n"));
 	sem_wait(state.somebody_dead_m);
 	i = 0;
 	while (i < state.amount)
 	{
 		kill(state.philos[i].pid, SIGHUP);
-		clear_philo(&state.philos[i]);
-		i++;
+		clear_philo(&state.philos[i++]);
 	}
 	clear_state(&state);
 	return (0);

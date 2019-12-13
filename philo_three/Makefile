@@ -6,12 +6,12 @@
 #    By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/09 19:06:43 by ncolomer          #+#    #+#              #
-#    Updated: 2019/12/13 00:44:15 by ncolomer         ###   ########.fr        #
+#    Updated: 2019/12/13 16:08:44 by ncolomer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRCS			= main.c utils.c exit.c messages.c init.c forks.c eat.c \
-					semaphores.c
+					semaphores.c monitor.c
 OBJS			= $(SRCS:.c=.o)
 
 CC				= gcc
