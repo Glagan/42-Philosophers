@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 19:26:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 17:57:27 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 18:14:45 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,17 @@ int
 	state->time_to_die = ft_atoi(argv[2]);
 	state->time_to_eat = ft_atoi(argv[3]);
 	state->time_to_sleep = ft_atoi(argv[4]);
-	state->forks_m = NULL;
-	state->philos = NULL;
-	state->cur_eat_count = 0;
 	if (argc == 6)
 		state->must_eat_count = ft_atoi(argv[5]);
 	else
 		state->must_eat_count = 0;
+	if (state->amount < 2 || state->amount > 200 || state->time_to_die < 60
+		|| state->time_to_eat < 60 || state->time_to_sleep < 60
+		|| state->must_eat_count < 0)
+		return (1);
+	state->forks_m = NULL;
+	state->philos = NULL;
+	state->cur_eat_count = 0;
 	if (!(state->philos =
 		(t_philo*)malloc(sizeof(*(state->philos)) * state->amount)))
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 16:09:32 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 18:12:30 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,7 @@ int
 	sem_wait(state.somebody_dead_m);
 	i = 0;
 	while (i < state.amount)
-	{
-		kill(state.philos[i].pid, SIGHUP);
-		clear_philo(&state.philos[i++]);
-	}
+		kill(state.philos[i++].pid, SIGKILL);
 	clear_state(&state);
 	return (0);
 }

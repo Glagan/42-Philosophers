@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 19:26:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 16:00:34 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 18:14:40 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,10 @@ static int
 {
 	sem_unlink(SEMAPHORE_FORK);
 	sem_unlink(SEMAPHORE_WRITE);
-	sem_unlink(SEMAPHORE_OVER);
 	sem_unlink(SEMAPHORE_DEAD);
 	sem_unlink(SEMAPHORE_DEADW);
 	if ((state->forks_m = ft_sem_open(SEMAPHORE_FORK, state->amount)) < 0
 		|| (state->write_m = ft_sem_open(SEMAPHORE_WRITE, 1)) < 0
-		|| (state->is_over_m = ft_sem_open(SEMAPHORE_OVER, 1)) < 0
 		|| (state->somebody_dead_m = ft_sem_open(SEMAPHORE_DEAD, 0)) < 0
 		|| (state->dead_write_m = ft_sem_open(SEMAPHORE_DEADW, 1)) < 0)
 		return (1);
@@ -63,13 +61,16 @@ int
 	state->time_to_die = ft_atoi(argv[2]);
 	state->time_to_eat = ft_atoi(argv[3]);
 	state->time_to_sleep = ft_atoi(argv[4]);
-	state->forks_m = NULL;
-	state->philos = NULL;
-	state->over = 0;
 	if (argc == 6)
 		state->must_eat_count = ft_atoi(argv[5]);
 	else
 		state->must_eat_count = 0;
+	if (state->amount < 2 || state->amount > 200 || state->time_to_die < 60
+		|| state->time_to_eat < 60 || state->time_to_sleep < 60
+		|| state->must_eat_count < 0)
+		return (1);
+	state->forks_m = NULL;
+	state->philos = NULL;
 	if (!(state->philos =
 		(t_philo*)malloc(sizeof(*(state->philos)) * state->amount)))
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:07 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 16:09:41 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 18:11:40 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 
 # define SEMAPHORE_FORK		"pSemaphoreFork"
 # define SEMAPHORE_WRITE	"pSemaphoreWrite"
-# define SEMAPHORE_OVER		"pSemaphoreOver"
 # define SEMAPHORE_DEAD		"pSemaphoreDead"
 # define SEMAPHORE_DEADW	"pSemaphoreDeadWrite"
 # define SEMAPHORE_PHILO	"pSemaphorePhilo"
@@ -61,12 +60,10 @@ typedef struct		s_state
 	int				must_eat_count;
 
 	uint64_t		start;
-	int				over;
 
 	t_philo			*philos;
 	sem_t			*forks_m;
 	sem_t			*write_m;
-	sem_t			*is_over_m;
 	sem_t			*somebody_dead_m;
 	sem_t			*dead_write_m;
 }					t_state;
