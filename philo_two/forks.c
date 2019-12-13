@@ -6,10 +6,11 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/12 22:40:23 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 23:18:20 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 15:44:32 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
 #include "philosophers.h"
 
 void

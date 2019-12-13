@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 19:26:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 23:14:18 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 15:13:40 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ static int
 	int	i;
 
 	pthread_mutex_init(&state->write_m, NULL);
-	pthread_mutex_init(&state->is_over_m, NULL);
 	pthread_mutex_init(&state->somebody_dead_m, NULL);
 	pthread_mutex_lock(&state->somebody_dead_m);
 	if (!(state->forks_m =
@@ -42,8 +41,11 @@ static void
 		state->philos[i].position = i;
 		state->philos[i].lfork = i;
 		state->philos[i].rfork = (i + 1) % state->amount;
+		state->philos[i].eat_count = 0;
 		state->philos[i].state = state;
 		pthread_mutex_init(&state->philos[i].mutex, NULL);
+		pthread_mutex_init(&state->philos[i].eat_m, NULL);
+		pthread_mutex_lock(&state->philos[i].eat_m);
 		i++;
 	}
 }
@@ -57,11 +59,10 @@ int
 	state->time_to_sleep = ft_atoi(argv[4]);
 	state->forks_m = NULL;
 	state->philos = NULL;
-	state->over = 0;
-	if (argc == 5)
-		state->must_eat = ft_atoi(argv[5]);
+	if (argc == 6)
+		state->must_eat_count = ft_atoi(argv[5]);
 	else
-		state->must_eat = 0;
+		state->must_eat_count = -1;
 	if (!(state->philos =
 		(t_philo*)malloc(sizeof(*(state->philos)) * state->amount)))
 		return (1);

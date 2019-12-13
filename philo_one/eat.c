@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/12 22:41:58 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 23:06:41 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 15:08:46 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ void
 	philo->limit = philo->last_eat + philo->state->time_to_die;
 	display_message(philo, TYPE_EAT);
 	usleep(philo->state->time_to_eat * 1000);
+	philo->eat_count++;
 	philo->is_eating = 0;
 	pthread_mutex_unlock(&philo->mutex);
+	pthread_mutex_unlock(&philo->eat_m);
 }

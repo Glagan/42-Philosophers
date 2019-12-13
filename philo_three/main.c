@@ -6,11 +6,32 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 00:50:53 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 15:59:04 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+static void
+	*monitor_count(void *state_v)
+{
+	t_state *state;
+	int		total;
+	int		i;
+
+	state = (t_state*)state_v;
+	total = 0;
+	while (total < state->must_eat_count)
+	{
+		i = 0;
+		while (i < state->amount)
+			sem_wait(state->philos[i++].eat_count_m);
+		total++;
+	}
+	display_message(&state->philos[0], TYPE_OVER);
+	sem_post(state->somebody_dead_m);
+	return ((void*)0);
+}
 
 static void
 	*monitor(void *philo_v)
@@ -61,7 +82,14 @@ static int
 {
 	int			i;
 	void		*philo;
+	pthread_t	tid;
 
+	if (state->must_eat_count > 0)
+	{
+		if (pthread_create(&tid, NULL, &monitor_count, (void*)state) != 0)
+			return (1);
+		pthread_detach(tid);
+	}
 	state->start = get_time();
 	i = 0;
 	while (i < state->amount)
@@ -87,7 +115,7 @@ int
 	int		i;
 	t_state	state;
 
-	if (argc < 4 || argc > 5)
+	if (argc < 5 || argc > 6)
 		return (exit_error("error: bad arguments\n"));
 	if (init(&state, argc, argv))
 		return (clear_state(&state) && exit_error("error: fatal\n"));

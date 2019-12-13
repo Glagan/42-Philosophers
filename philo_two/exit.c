@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/12 22:02:59 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 23:52:24 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 15:44:40 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,10 @@ int
 	char	semaphore[250];
 
 	sem_close(philo->mutex);
-	make_semaphore_name((char*)semaphore, philo->position);
+	make_semaphore_name(SEMAPHORE_PHILO, (char*)semaphore, philo->position);
+	sem_unlink(semaphore);
+	sem_close(philo->eat_count_m);
+	make_semaphore_name(SEMAPHORE_PHILOEAT, (char*)semaphore, philo->position);
 	sem_unlink(semaphore);
 	return (0);
 }
@@ -31,10 +34,10 @@ int
 		free(state->philos);
 	sem_close(state->write_m);
 	sem_unlink(SEMAPHORE_WRITE);
-	sem_close(state->is_over_m);
-	sem_unlink(SEMAPHORE_OVER);
 	sem_close(state->somebody_dead_m);
 	sem_unlink(SEMAPHORE_DEAD);
+	sem_close(state->must_eat_m);
+	sem_unlink(SEMAPHORE_MUST);
 	return (1);
 }
 

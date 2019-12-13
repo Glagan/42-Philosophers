@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/12 22:02:59 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 23:24:13 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 15:09:51 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,16 @@ int
 		free(state->forks_m);
 	}
 	if (state->philos)
+	{
+		i = 0;
+		while (i < state->amount)
+		{
+			pthread_mutex_destroy(&state->philos[i].mutex);
+			pthread_mutex_destroy(&state->philos[i++].eat_m);
+		}
 		free(state->philos);
+	}
 	pthread_mutex_destroy(&state->write_m);
-	pthread_mutex_destroy(&state->is_over_m);
 	pthread_mutex_destroy(&state->somebody_dead_m);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:07 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/12 23:26:28 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 15:09:38 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # define TYPE_FORK 	2
 # define TYPE_THINK	3
 # define TYPE_DIED 	4
+# define TYPE_OVER 	5
 
 struct s_state;
 
@@ -34,8 +35,10 @@ typedef struct		s_philo
 	uint64_t		last_eat;
 	int				lfork;
 	int				rfork;
+	int				eat_count;
 	struct s_state	*state;
 	pthread_mutex_t	mutex;
+	pthread_mutex_t	eat_m;
 }					t_philo;
 
 typedef struct		s_state
@@ -44,15 +47,13 @@ typedef struct		s_state
 	uint64_t		time_to_die;
 	uint64_t		time_to_eat;
 	uint64_t		time_to_sleep;
-	int				must_eat;
+	int				must_eat_count;
 
 	uint64_t		start;
-	int				over;
 
 	t_philo			*philos;
 	pthread_mutex_t	*forks_m;
 	pthread_mutex_t	write_m;
-	pthread_mutex_t	is_over_m;
 	pthread_mutex_t	somebody_dead_m;
 }					t_state;
 

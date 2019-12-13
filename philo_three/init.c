@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 19:26:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 00:51:08 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 16:00:34 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,18 @@ static int
 	i = 0;
 	while (i < state->amount)
 	{
-		make_semaphore_name((char*)semaphore, i);
-		sem_unlink(semaphore);
 		state->philos[i].is_eating = 0;
 		state->philos[i].position = i;
 		state->philos[i].lfork = i;
 		state->philos[i].rfork = (i + 1) % state->amount;
 		state->philos[i].state = state;
+		make_semaphore_name(SEMAPHORE_PHILO, (char*)semaphore, i);
+		sem_unlink(semaphore);
 		if ((state->philos[i].mutex = ft_sem_open(semaphore, 1)) < 0)
+			return (1);
+		make_semaphore_name(SEMAPHORE_PHILOEAT, (char*)semaphore, i);
+		sem_unlink(semaphore);
+		if ((state->philos[i].eat_count_m = ft_sem_open(semaphore, 0)) < 0)
 			return (1);
 		i++;
 	}
@@ -62,10 +66,10 @@ int
 	state->forks_m = NULL;
 	state->philos = NULL;
 	state->over = 0;
-	if (argc == 5)
-		state->must_eat = ft_atoi(argv[5]);
+	if (argc == 6)
+		state->must_eat_count = ft_atoi(argv[5]);
 	else
-		state->must_eat = 0;
+		state->must_eat_count = 0;
 	if (!(state->philos =
 		(t_philo*)malloc(sizeof(*(state->philos)) * state->amount)))
 		return (1);

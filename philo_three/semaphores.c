@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/12 23:22:05 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 00:02:54 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 15:57:47 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ sem_t
 }
 
 char
-	*make_semaphore_name(char *buffer, int position)
+	*make_semaphore_name(char const *base, char *buffer, int position)
 {
 	int	i;
 
-	i = ft_strcpy(buffer, "pSemaphorePhilo");
+	i = ft_strcpy(buffer, base);
 	while (position > 0)
 	{
 		buffer[i++] = (position % 10) + '0';
