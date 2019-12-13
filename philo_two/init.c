@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 19:26:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 15:50:20 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 17:57:27 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@ static int
 {
 	if ((state->forks_m = ft_sem_open(SEMAPHORE_FORK, state->amount)) < 0
 		|| (state->write_m = ft_sem_open(SEMAPHORE_WRITE, 1)) < 0
-		|| (state->somebody_dead_m = ft_sem_open(SEMAPHORE_DEAD, 0)) < 0
-		|| (state->must_eat_m = ft_sem_open(SEMAPHORE_MUST, 0)) < 0)
+		|| (state->somebody_dead_m = ft_sem_open(SEMAPHORE_DEAD, 0)) < 0)
 		return (1);
 	return (0);
 }
@@ -58,6 +57,7 @@ int
 	state->time_to_sleep = ft_atoi(argv[4]);
 	state->forks_m = NULL;
 	state->philos = NULL;
+	state->cur_eat_count = 0;
 	if (argc == 6)
 		state->must_eat_count = ft_atoi(argv[5]);
 	else

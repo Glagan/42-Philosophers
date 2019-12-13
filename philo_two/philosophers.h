@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:07 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 15:55:01 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 18:07:56 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 # define SEMAPHORE_FORK		"pSemaphoreFork"
 # define SEMAPHORE_WRITE	"pSemaphoreWrite"
 # define SEMAPHORE_DEAD		"pSemaphoreDead"
-# define SEMAPHORE_MUST		"pSemaphoreMustEat"
 # define SEMAPHORE_PHILO	"pSemaphorePhilo"
 # define SEMAPHORE_PHILOEAT	"pSemaphorePhiloEat"
 
@@ -56,13 +55,13 @@ typedef struct		s_state
 	uint64_t		time_to_eat;
 	uint64_t		time_to_sleep;
 	int				must_eat_count;
+	int				cur_eat_count;
 
 	uint64_t		start;
 	int				over;
 
 	t_philo			*philos;
 	sem_t			*forks_m;
-	sem_t			*must_eat_m;
 	sem_t			*write_m;
 	sem_t			*somebody_dead_m;
 }					t_state;
@@ -77,8 +76,6 @@ int					ft_strcpy(char *dst, const char *src);
 
 uint64_t			get_time(void);
 
-int					clear_philo(t_philo *philo);
-
 int					clear_state(t_state *state);
 
 int					exit_error(char const *str);
@@ -90,12 +87,12 @@ sem_t				*ft_sem_open(char const *name, int value);
 char				*make_semaphore_name(char const *base,
 											char *buffer, int position);
 
-void				take_forks(t_philo *philo);
+int					take_forks(t_philo *philo);
 
-void				clean_forks(t_philo *philo);
+int					clean_forks(t_philo *philo);
 
-void				eat(t_philo *philo);
+int					eat(t_philo *philo);
 
-void				display_message(t_philo *philo, int type);
+int					display_message(t_philo *philo, int type);
 
 #endif

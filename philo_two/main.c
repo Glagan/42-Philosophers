@@ -6,36 +6,29 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 16:04:42 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 18:04:14 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
 #include "philosophers.h"
 
 static void
 	*monitor_count(void *state_v)
 {
 	t_state *state;
-	int		total;
 	int		i;
 
 	state = (t_state*)state_v;
-	total = 0;
-	while (total < state->must_eat_count)
+	while (state->cur_eat_count < state->must_eat_count)
 	{
 		i = 0;
 		while (i < state->amount)
 			sem_wait(state->philos[i++].eat_count_m);
-		total++;
+		state->cur_eat_count++;
 	}
 	display_message(&state->philos[0], TYPE_OVER);
-	i = 0;
-	while (i < state->amount)
-		sem_wait(state->philos[i++].mutex);
 	sem_post(state->somebody_dead_m);
-	i = 0;
-	while (i < state->amount)
-		sem_post(state->philos[i++].mutex);
 	return ((void*)0);
 }
 
@@ -47,10 +40,12 @@ static void
 	philo = (t_philo*)philo_v;
 	while (1)
 	{
-		sem_wait(philo->mutex);
+		if (sem_wait(philo->mutex) != 0)
+			return ((void*)0);
 		if (!philo->is_eating && get_time() > philo->limit)
 		{
-			display_message(philo, TYPE_DIED);
+			if (display_message(philo, TYPE_DIED))
+				return ((void*)0);
 			sem_post(philo->mutex);
 			sem_post(philo->state->somebody_dead_m);
 			return ((void*)0);
@@ -66,6 +61,7 @@ static void
 {
 	t_philo		*philo;
 	pthread_t	tid;
+	int			should_end;
 
 	philo = (t_philo*)philo_v;
 	philo->last_eat = get_time();
@@ -75,10 +71,15 @@ static void
 	pthread_detach(tid);
 	while (1)
 	{
-		take_forks(philo);
-		eat(philo);
-		clean_forks(philo);
-		display_message(philo, TYPE_THINK);
+		if (take_forks(philo))
+			return ((void*)0);
+		should_end = eat(philo);
+		if (clean_forks(philo))
+			return ((void*)0);
+		if (should_end)
+			return ((void*)0);
+		if (display_message(philo, TYPE_THINK))
+			return ((void*)0);
 	}
 	return ((void*)0);
 }
@@ -113,7 +114,6 @@ static int
 int
 	main(int argc, char const **argv)
 {
-	int		i;
 	t_state	state;
 
 	if (argc < 5 || argc > 6)
@@ -122,12 +122,6 @@ int
 		|| start_threads(&state))
 		return (clear_state(&state) && exit_error("error: fatal\n"));
 	sem_wait(state.somebody_dead_m);
-	i = 0;
-	while (i < state.amount)
-	{
-		sem_wait(state.philos[i].mutex);
-		clear_philo(&state.philos[i++]);
-	}
 	clear_state(&state);
 	return (0);
 }

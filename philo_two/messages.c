@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 18:31:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 15:33:51 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 18:01:58 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,15 @@ static char
 	return (" died\n");
 }
 
-void
+int
 	display_message(t_philo *philo, int type)
 {
 	static int	done = 0;
+	int			ret;
 
-	sem_wait(philo->state->write_m);
+	if (sem_wait(philo->state->write_m) != 0)
+		return (1);
+	ret = 1;
 	if (!done)
 	{
 		ft_putnbr_fd(get_time() - philo->state->start, 1);
@@ -43,6 +46,8 @@ void
 		if (type >= TYPE_DIED)
 			done = 1;
 		write(1, get_message(type), ft_strlen(get_message(type)));
+		ret = 0;
 	}
 	sem_post(philo->state->write_m);
+	return (ret);
 }
