@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 12:40:07 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 18:11:40 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/13 18:32:04 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,6 @@ void				ft_putnbr_fd(uint64_t n, int fd);
 int					ft_strcpy(char *dst, const char *src);
 
 uint64_t			get_time(void);
-
-int					clear_philo(t_philo *philo);
 
 int					clear_state(t_state *state);
 
