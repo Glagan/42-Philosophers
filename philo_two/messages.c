@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 18:31:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 18:01:58 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/19 20:47:19 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int
 		write(1, get_message(type), ft_strlen(get_message(type)));
 		ret = 0;
 	}
-	sem_post(philo->state->write_m);
+	if (sem_post(philo->state->write_m))
+		return (1);
 	return (ret);
 }

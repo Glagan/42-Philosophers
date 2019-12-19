@@ -6,7 +6,7 @@
 /*   By: ncolomer <ncolomer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/09 15:30:46 by ncolomer          #+#    #+#             */
-/*   Updated: 2019/12/13 18:29:48 by ncolomer         ###   ########.fr       */
+/*   Updated: 2019/12/19 21:44:50 by ncolomer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,14 @@ static void
 	{
 		i = 0;
 		while (i < state->amount)
-			sem_wait(state->philos[i++].eat_count_m);
+			if (sem_wait(state->philos[i++].eat_count_m))
+				return ((void*)0);
 		state->cur_eat_count++;
 	}
-	display_message(&state->philos[0], TYPE_OVER);
-	sem_post(state->somebody_dead_m);
+	if (display_message(&state->philos[0], TYPE_OVER))
+		return ((void*)0);
+	if (sem_post(state->somebody_dead_m))
+		return ((void*)0);
 	return ((void*)0);
 }
 
@@ -46,12 +49,14 @@ static void
 		{
 			if (display_message(philo, TYPE_DIED))
 				return ((void*)0);
-			sem_post(philo->mutex);
-			sem_post(philo->state->somebody_dead_m);
+			if (sem_post(philo->mutex))
+				return ((void*)0);
+			if (sem_post(philo->state->somebody_dead_m))
+				return ((void*)0);
 			return ((void*)0);
 		}
-		sem_post(philo->mutex);
-		usleep(1000);
+		if (sem_post(philo->mutex))
+			return ((void*)0);
 	}
 	return ((void*)0);
 }
